@@ -1,8 +1,11 @@
 /**
-*/
+ */
 
 'use strict';
 
-angular.module('myApp').controller('HomeCtrl', ['$scope', 'zlQueryBuilder', function($scope, zlQueryBuilder) {
-	//TODO - put any directive code here
+
+
+angular.module('myApp').controller('HomeCtrl', ['$scope', 'query1Service', 'query2Service', function($scope, query1Service, query2Service){
+
+    //TODO - put any directive code here
 }]);
