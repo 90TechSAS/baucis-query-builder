@@ -27,5 +27,3 @@ Easily Build complex requests
             .sort('field')
             .populate([{path: 'subObject1'}, {path: 'subObject2'])
     ```
-    
-    
