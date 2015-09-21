@@ -15,8 +15,8 @@ module.exports = function(config){
 
         // list of files / patterns to load in the browser
         files: [
-            'node_modules/angular/angular.js',
-            'node_modules/lodash/lodash.js',
+            'bower_components/angular/angular.js',
+            'bower_components/lodash/lodash.js',
             'node_modules/angular-mocks/angular-mocks.js',
             {pattern: 'build/**/*.js', included: true},
           //  'test-main.js',
