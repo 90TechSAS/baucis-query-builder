@@ -1,4 +1,5 @@
 # baucis-query-builder
+[![Build Status](https://travis-ci.org/90TechSAS/baucis-query-builder.svg?branch=master)](https://travis-ci.org/90TechSAS/baucis-query-builder)
 
 Easily Build complex requests
 
