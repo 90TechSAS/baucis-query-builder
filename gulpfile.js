@@ -6,7 +6,7 @@ var es = require('event-stream');
 
 gulp.task('scripts', function () {
     var javascripts = gulp.src('./src/**/*.js')
-        .pipe(babel());
+        .pipe(babel({auxiliaryCommentBefore: "istanbul ignore next"}));
 
 
     es.merge(javascripts)

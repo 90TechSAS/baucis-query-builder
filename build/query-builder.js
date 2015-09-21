@@ -1,6 +1,10 @@
 'use strict';
 
+// istanbul ignore next
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+// istanbul ignore next
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -27,11 +31,6 @@ var QueryBuilder = (function () {
             _.merge(queryObject, query);
         }
     }, {
-        key: 'setPath',
-        value: function setPath(path) {
-            this.path = this.path + path;
-        }
-    }, {
         key: 'getPath',
         value: function getPath() {
             return this.path;
@@ -48,18 +47,28 @@ var QueryBuilder = (function () {
         key: 'populate',
         value: function populate(populateArray) {
             if (populateArray) {
-                this.options.populate = JSON.stringify(populateArray);
+                var _populateArray = populateArray;
+                if (!_.isArray(_populateArray)) {
+                    _populateArray = [populateArray];
+                }
+                _populateArray = _.map(_populateArray, function (populate) {
+                    if (typeof populate === 'string') {
+                        return { path: populate };
+                    }
+                    return populate;
+                });
+                this.options.populate = JSON.stringify(_populateArray);
             }
             return this;
         }
     }, {
         key: 'select',
-        value: function select(key, ids) {
+        value: function select(ids, key) {
             var k = key || '_id';
             if (ids && ids.length) {
                 var obj = {};
                 obj[k] = { $in: ids };
-                _setQuery(obj);
+                this._setQuery(obj);
             }
             return this;
         }
@@ -73,13 +82,23 @@ var QueryBuilder = (function () {
         }
     }, {
         key: 'get',
-        value: function get() {
-            return this.$http.get(this.path, { params: this.options });
+        value: function get(keep) {
+            var _options = _.cloneDeep(this.options);
+            if (!keep) {
+                this.flush();
+            }
+            return this.$http.get(this.path, { params: _options });
+        }
+    }, {
+        key: 'flush',
+        value: function flush() {
+            this.options = {};
+            return this;
         }
     }, {
         key: 'echo',
         value: function echo() {
-            console.info(this.options);
+            console.log(this.options);
         }
     }]);
 
@@ -91,7 +110,6 @@ var ZlQueryBuilderProvider = (function () {
         _classCallCheck(this, ZlQueryBuilderProvider);
 
         this.rootApiPath = '';
-        console.info(this);
     }
 
     _createClass(ZlQueryBuilderProvider, [{
@@ -105,11 +123,9 @@ var ZlQueryBuilderProvider = (function () {
             var self = this;
             return {
                 get: function get(path) {
-                    console.info('get');
                     return new QueryBuilder($http, self.rootApiPath + path);
                 }
             };
-            //   return new QueryBuilder($http, this.rootApiPath);
         }
     }]);
 

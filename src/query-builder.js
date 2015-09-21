@@ -20,9 +20,6 @@ class QueryBuilder {
         _.merge(queryObject, query);
     }
 
-    setPath(path){
-        this.path = this.path + path
-    }
 
     getPath(){
         return this.path;
@@ -37,17 +34,27 @@ class QueryBuilder {
 
     populate(populateArray){
         if (populateArray){
-            this.options.populate = JSON.stringify(populateArray);
+            var _populateArray = populateArray;
+            if (!_.isArray(_populateArray)){
+                _populateArray = [populateArray];
+            }
+            _populateArray        = _.map(_populateArray, function(populate){
+                if (typeof populate === 'string'){
+                    return {path: populate}
+                }
+                return populate
+            });
+            this.options.populate = JSON.stringify(_populateArray);
         }
         return this;
     }
 
-    select(key, ids){
+    select(ids, key){
         var k = key || '_id';
         if (ids && ids.length){
             var obj = {};
             obj[k]  = {$in: ids};
-            _setQuery(obj);
+            this._setQuery(obj);
         }
         return this;
     }
@@ -59,12 +66,21 @@ class QueryBuilder {
         return this;
     }
 
-    get(){
-        return this.$http.get(this.path, {params: this.options})
+    get(keep){
+        var _options = _.cloneDeep(this.options);
+        if (!keep){
+            this.flush();
+        }
+        return this.$http.get(this.path, {params: _options})
+    }
+
+    flush(){
+        this.options = {};
+        return this;
     }
 
     echo(){
-        console.info(this.options);
+        console.log(this.options);
     }
 
 
@@ -74,7 +90,6 @@ class ZlQueryBuilderProvider {
 
     constructor(){
         this.rootApiPath = '';
-        console.info(this);
     }
 
 
@@ -86,11 +101,9 @@ class ZlQueryBuilderProvider {
         var self = this;
         return {
             get: function(path){
-                console.info('get');
                 return new QueryBuilder($http, self.rootApiPath + path);
             }
         };
-        //   return new QueryBuilder($http, this.rootApiPath);
     }
 
 }
